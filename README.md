@@ -107,12 +107,12 @@ This enables the identification of significantly enriched biological functions a
 	
 - Either directly from GitHub by pressing Code ➜ Download ZIP</li>
 
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Extract_ZIP.png" width="400"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Download_ZIP.png" width="350"></a>
 	
 - Or through a Linux terminal using the command below
 	
 ```console
-(base) user@terminal:~$ wget https://github.com/tt104/scmix/archive/refs/heads/main.zip
+(base) user@terminal:~$ wget https://github.com/tt104/scmixture/archive/refs/heads/main.zip
 ```
 
 **2.** Extract the contents of zip file
@@ -121,40 +121,48 @@ This enables the identification of significantly enriched biological functions a
 
 <a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Extract_ZIP.png" width="600"></a>
 
-- Or if using the terminal, use the command below, where `scmix-main.zip` is the file path of the zip file and `~/new_file_path` is the location where you want to save the file
+- Or if using the terminal, use the command below, where `scmixture.zip` is the file path of the zip file and `~/new_file_path` is the location where you want to save the file
 
 ```console
-(base) user@terminal:~$ unzip scmix-main.zip -d ~/new_file_path
+(base) user@terminal:~$ unzip scmixture.zip -d ~/new_file_path
 ```
 
-**3.** Once the project has been unzipped, navigate to the project folder, where `scmix-main` is the file path
+**3.** Once the project has been unzipped, navigate to the project folder, where `scmixture` is the file path
 
 ```console
-(base) user@terminal:~$ cd scmix-main
+(base) user@terminal:~$ cd scmixture
 ```
-
-**4.** Build the singularity container `scmix.sif` through command:
-
-```console
-(base) user@terminal:~/scmix-main$ sudo singularity build containers/scmix.sif containers/scmix.def
-```
-
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Container_Build.gif" width="700"></a>
 
 </details>
 	
 <details open="open">
-	<summary><b>Dataset Configuration</b></summary>
+	<summary><b>Configuration</b></summary>
 
-**5.** Place one or more scRNA-seq csv dataset(s) into `scmix-main/data`
+**5.** Place one or more scRNA-seq csv dataset(s) into folder `scmixture/data`
+
+- If the folder does not exist, you can create it using the command below
+	
+```console
+(base) user@terminal:~$ mkdir data
+```
 	
 <a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Data_Folder.png" width="600"></a>
 	
-**6.** Optionally specify the dataset you wish to cluster when the code is run by adding its name into config.yaml
-* Do not include the file extension `.csv` in the name
-* This will not work unless the data is located in `scmix-main/data`
+**6.** Optionally edit config/config.yaml to change the algorithm's settings
 	
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Config_Update.png" width="800"></a>
+```yaml
+# K-means initialisation - no. of clusters
+kmeans: 40
+# Controls the number of transcripts selected to consider in clustering
+filter: 1000
+# Burn-in, total number of MCMC chain iterations, thinning out interval and total number of chains
+burnin: 500
+iter: 1000
+thin: 10
+chains: 4
+# model - nb or mult
+model: "nb"
+```
 	
 </details>
 
@@ -163,14 +171,14 @@ This enables the identification of significantly enriched biological functions a
 
 **7.** Activate the snakemake environment through conda.
 ```console
-(base) user@terminal:~/scmix-main$ conda activate snakemake
+(base) user@terminal:~/scmixture$ conda activate snakemake
 ```
 
 **8.** Run the code through the command below:
 * Replace `n` in `--cores n` with the number of cores you wish to use
-* Optionally add the command option `--config data=DATASET`, where `DATASET` is the name of your dataset, if you did not specify a dataset in the config.yaml file
+* Replace `DATASET` with the name of your dataset, ignoring the .csv file extension, e.g. `--config data=GBM`
 ```console
-(snakemake) user@terminal:~/scmix-main$ snakemake --use-singularity --cores n
+(snakemake) user@terminal:~/scmixture$ snakemake --use-singularity --cores n --config data=DATASET
 ```
 
 <a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Code_Run.gif" width="800"></a>
