@@ -26,10 +26,8 @@ By taking a Bayesian approach we are able to build interpretable models of expre
 Applied to a publicly available data set of single cell RNA-seq counts of multiple cell types from the mouse cortex and hippocampus, we demonstrate how our approach can be used to distinguish sub-populations of cells as clusters in the data, and to identify gene sets that are indicative of membership of a sub-population.
 The methodology is implemented as an open source Snakemake pipeline hosted on this repository.</p>
 
-<div>
-  <a href="https://www.biorxiv.org/content/10.1101/2021.05.19.444841v2"><img align="left" width="100" src="https://github.com/tt104/scmixture/blob/assets/Images/bioRxiv_Logo.png"></a>
-  <p><a href="https://www.biorxiv.org/content/10.1101/2021.05.19.444841v2"><b>Identifying sub-populations of cells in single cell transcriptomic data – a Bayesian mixture model approach to zero-inflation of counts</b></a></p>
-</div>
+<a href="https://www.biorxiv.org/content/10.1101/2021.05.19.444841v2"><img align="left" width="100" src="https://github.com/tt104/scmixture/blob/assets/Images/bioRxiv_Logo.png"></a>
+<p><a href="https://www.biorxiv.org/content/10.1101/2021.05.19.444841v2"><b>Identifying sub-populations of cells in single cell transcriptomic data – a Bayesian mixture model approach to zero-inflation of counts</b></a></p>
 
 ---
 
@@ -74,6 +72,8 @@ This enables the identification of significantly enriched biological functions a
 <a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/gProfiler.gif" width="100%"></a>
 	
 </details>
+
+---
 
 <a id="run"></a>
 <h2>Running the Code</h2>
@@ -195,7 +195,7 @@ model: "nb"
 <details open="open">
 	<summary><b>Running the Code</b></summary>
 
-**7.** Activate the snakemake environment through conda.
+**7.** Activate the snakemake environment through conda
 ```console
 (base) user@terminal:~/scmixture$ conda activate snakemake
 ```
