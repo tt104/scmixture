@@ -80,19 +80,49 @@ This enables the identification of significantly enriched biological functions a
 
 <h3>Dependencies</h3>
 
-<details>
-	<summary><b>Singularity</b></summary>
-	<p>Singularity is a container platform. Within a container, required programs, libraries, data and scripts can be packaged together and distributed to create a reproducable runtime environment.</p>
-	<p><b>Installation</b></p>
-	<p>Singularity runs on Linux, though can also be run on Windows and Mac through a virtual machine. For installation instructions, see: https://sylabs.io/guides/3.0/user-guide/installation.html</p>
-</details>
-<details>
-	<summary><b>Snakemake</b></summary>
-	<p>Snakemake is a workflow management system for reproducible and scalable data analysis through the creation of pipelines. The workflow is defined in a ‘Snakefile’ consisting of rules that represent how to create output files from input files.
-	</p>
-	<p><b>Installation</b></p>
-	<p>To install see: https://snakemake.readthedocs.io/en/stable/getting_started/installation.html</p>
-</details>
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>About</th>
+	    <th>Prior Dependencies</th>
+            <th>Installation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td align="center" valign="top"><a href="https://www.anaconda.com/products/individual"><img height="60" width="60" src="https://github.com/tt104/scmixture/blob/assets/Images/Anaconda_Logo.png"></a><p><b>Anaconda</b></a></td>
+            <td align="left" valign="top">Anaconda is a distribution of the Python and R programming languages for scientific computing, that aims to simplify package management and deployment.</td>
+	    <td align="left" valign="top">
+	        <ul>
+          		<li>N/A</li>
+        	</ul>
+	    </td>
+            <td align="left" valign="top">Download from <a href="https://www.anaconda.com/products/individual">the Anaconda site</a></td>
+        </tr>
+        <tr>
+            <td align="center" valign="top"><a href="https://sylabs.io/guides/3.0/user-guide/installation.html"><img height="60" width="60" src="https://github.com/tt104/scmixture/blob/assets/Images/Singularity_Logo.png"></a><p><b>Singularity</b></a></td>
+            <td align="left" valign="top">Singularity is a container platform. Within a container, required programs, libraries, data and scripts can be packaged together and distributed to create a reproducable runtime environment.</td>
+	    <td align="left" valign="top">
+	        <ul>
+			<li>Singularity runs on Linux, though can also be run on Windows and Mac through a virtual machine such as <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a></li>
+          		<li>Anaconda</li>
+        	</ul>
+	    </td>
+            <td align="left" valign="top">See <a href="https://sylabs.io/guides/3.0/user-guide/installation.html">Singularity Installation</a></td>
+        </tr>
+	<tr>
+            <td align="center" valign="top"><a href="https://snakemake.readthedocs.io/en/stable/getting_started/installation.html"><img height="60" width="60" src="https://github.com/tt104/scmixture/blob/assets/Images/Snakemake_Logo.png"></a><p><b>Snakemake</b></a></td>
+            <td align="left" valign="top">Snakemake is a workflow management system for reproducible and scalable data analysis through the creation of pipelines. The workflow is defined in a ‘Snakefile’ consisting of rules that represent how to create output files from input files.</td>
+	    <td align="left" valign="top">
+	        <ul>
+          		<li>Anaconda</li>
+        	</ul>
+	    </td>
+            <td align="left" valign="top">See <a href="https://snakemake.readthedocs.io/en/stable/getting_started/installation.html">Snakemake Installation</a></td>
+        </tr>
+    </tbody>
+</table>
 
 <h3>Instructions</h3>
 
