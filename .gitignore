@@ -1,9 +1,0 @@
-*.csv
-*.sif
-.snakemake/*
-.julia/*
-*.swp
-*.pdf
-clustering/*
-*.html
-*.js
