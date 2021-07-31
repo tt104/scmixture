@@ -10,8 +10,7 @@
 	<ul>
 		<li><a href="#about">About</a></li>
 		<li><a href="#features">Features</a></li>
-		<li><a href="#dependencies">Dependencies</a></li>
-		<li><a href="#instructions">Instructions</a></li>
+		<li><a href="#instructions">Running the Code</a></li>
 	</ul>
 </details>
 
@@ -42,9 +41,9 @@ After running the pipeline, the following graphs are produced allowing the resul
 <details open="open">
 	<summary><b>UMAP</b></summary>
 	
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/GBM.umapClusters-1.jpg" width="450" align="right"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/UMAP.jpg" width="450" align="right"></a>
 	
-All cells are projected onto a 2D plane through UMAP embeddings allowing the clusters assigned by the model to be visualised.
+All cells are projected onto a 2D plane through UMAP embeddings of their gene expression allowing the clusters assigned by the model to be visualised.
 	
 > This graph is created under the directory results/plots
 	
@@ -60,26 +59,29 @@ For each cluster, an interactive graph is produced plotting the mean gene expres
 > These graphs are created under the directory results/{data}_exp
 	
 <p align="center"><sub><b>Average Gene Expression of All Clusters Against Cluster 1</b></sub></p>
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Cluster_Means.gif" width="100%"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Cluster_Means.gif" width="100%"></a>
 	
 </details>
 
 <details open="open">
 	<summary><b>g:Profiler</b></summary>
 	
-For the up and down regulated genes within each cluster, the results of gene set enrichment analysis are presented through interactive Manhattan plots.
+For the up and down regulated genes within each cluster, the results of gene set enrichment analysis with gprofiler2 are presented through interactive Manhattan plots.
+This enables the identification of significantly enriched biological functions and pathways from well established sources such as Gene Ontology (GO) and KEGG.
 	
 > This graph is created under the directory results/plots
 	
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Manhattan.gif" width="100%"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/gProfiler.gif" width="100%"></a>
 	
 </details>
 
-<a id="dependencies"></a>
-<h2>Dependencies</h2>
+<a id="instructions"></a>
+<h2>Running the Code</h2>
+
+<h3>Dependencies</h3>
 
 > For more information about a dependency, click the dropdown button to the left.
-> 
+
 <details>
 	<summary><a href="https://sylabs.io/guides/3.0/user-guide/installation.html"><b>Singularity</b></a></summary>
 	<p><b>What is Singularity?</b></p>
@@ -96,10 +98,7 @@ For the up and down regulated genes within each cluster, the results of gene set
 	<p>To install see: https://snakemake.readthedocs.io/en/stable/getting_started/installation.html</p>
 </details>
 
-<a id="instructions"></a>
-<h2>Instructions</h2>
-
-> Before following the instructions, make sure you have installed the <a href="#dependencies">dependencies.</a>
+<h3>Instructions</h3>
 
 <details open="open">
 	<summary><b>Set Up</b></summary>
@@ -108,7 +107,7 @@ For the up and down regulated genes within each cluster, the results of gene set
 	
 - Either directly from GitHub by pressing Code ➜ Download ZIP</li>
 
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Extract_ZIP.png" width="400"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Extract_ZIP.png" width="400"></a>
 	
 - Or through a Linux terminal using the command below
 	
@@ -120,7 +119,7 @@ For the up and down regulated genes within each cluster, the results of gene set
 
 - Either locate the file and pressing "Extract"
 
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Extract_ZIP.png" width="600"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Extract_ZIP.png" width="600"></a>
 
 - Or if using the terminal, use the command below, where `scmix-main.zip` is the file path of the zip file and `~/new_file_path` is the location where you want to save the file
 
@@ -140,7 +139,7 @@ For the up and down regulated genes within each cluster, the results of gene set
 (base) user@terminal:~/scmix-main$ sudo singularity build containers/scmix.sif containers/scmix.def
 ```
 
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Container_Build.gif" width="700"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Container_Build.gif" width="700"></a>
 
 </details>
 	
@@ -149,13 +148,13 @@ For the up and down regulated genes within each cluster, the results of gene set
 
 **5.** Place one or more scRNA-seq csv dataset(s) into `scmix-main/data`
 	
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Data_Folder.png" width="600"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Data_Folder.png" width="600"></a>
 	
 **6.** Optionally specify the dataset you wish to cluster when the code is run by adding its name into config.yaml
 * Do not include the file extension `.csv` in the name
 * This will not work unless the data is located in `scmix-main/data`
 	
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Config_Update.png" width="800"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Config_Update.png" width="800"></a>
 	
 </details>
 
@@ -174,6 +173,6 @@ For the up and down regulated genes within each cluster, the results of gene set
 (snakemake) user@terminal:~/scmix-main$ snakemake --use-singularity --cores n
 ```
 
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Code_Run.gif" width="800"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Code_Run.gif" width="800"></a>
 
 </details>
