@@ -145,7 +145,7 @@ This enables the identification of significantly enriched biological functions a
 
 - Either locate the file and pressing "Extract"
 
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Extract_ZIP.png" width="600"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Extract_ZIP.png" width="600"></a>
 
 - Or if using the terminal, use the command below, where `scmixture.zip` is the file path of the zip file and `~/new_file_path` is the location where you want to save the file
 
@@ -172,7 +172,7 @@ This enables the identification of significantly enriched biological functions a
 (base) user@terminal:~$ mkdir data
 ```
 	
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Data_Folder.png" width="600"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Data_Folder.png" width="600"></a>
 	
 **6.** Optionally edit config/config.yaml to change the algorithm's settings
 	
