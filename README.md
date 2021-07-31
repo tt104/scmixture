@@ -10,7 +10,7 @@
 	<ul>
 		<li><a href="#about">About</a></li>
 		<li><a href="#features">Features</a></li>
-		<li><a href="#instructions">Running the Code</a></li>
+		<li><a href="#run">Running the Code</a></li>
 	</ul>
 </details>
 
@@ -75,23 +75,19 @@ This enables the identification of significantly enriched biological functions a
 	
 </details>
 
-<a id="instructions"></a>
+<a id="run"></a>
 <h2>Running the Code</h2>
 
 <h3>Dependencies</h3>
 
-> For more information about a dependency, click the dropdown button to the left.
-
 <details>
-	<summary><a href="https://sylabs.io/guides/3.0/user-guide/installation.html"><b>Singularity</b></a></summary>
-	<p><b>What is Singularity?</b></p>
+	<summary><b>Singularity</b></summary>
 	<p>Singularity is a container platform. Within a container, required programs, libraries, data and scripts can be packaged together and distributed to create a reproducable runtime environment.</p>
 	<p><b>Installation</b></p>
 	<p>Singularity runs on Linux, though can also be run on Windows and Mac through a virtual machine. For installation instructions, see: https://sylabs.io/guides/3.0/user-guide/installation.html</p>
 </details>
 <details>
-	<summary><a href="https://snakemake.readthedocs.io/en/stable/getting_started/installation.html"><b>Snakemake</b></a></summary>
-	<p><b>What is Snakemake?</b></p>
+	<summary><b>Snakemake</b></summary>
 	<p>Snakemake is a workflow management system for reproducible and scalable data analysis through the creation of pipelines. The workflow is defined in a ‘Snakefile’ consisting of rules that represent how to create output files from input files.
 	</p>
 	<p><b>Installation</b></p>
