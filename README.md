@@ -42,7 +42,7 @@ After running the pipeline, the following graphs are produced allowing the resul
 <details open="open">
 	<summary><b>UMAP</b></summary>
 	
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/GBM.umapClusters-1.jpg" width="450" align="right"></a>
+<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/GBM.umapClusters-1.jpg" width="450" align="right"></a>
 	
 All cells are projected onto a 2D plane through UMAP embeddings allowing the clusters assigned by the model to be visualised.
 	
@@ -57,9 +57,10 @@ All cells are projected onto a 2D plane through UMAP embeddings allowing the clu
 	
 For each cluster, an interactive graph is produced plotting the mean gene expression within that cluster against the mean expression across all clusters. This allows the identification of genes with unusual expression within the discovered sub-populations of cells.
 	
-> This graph is created under the directory results/{data}_exp
+> These graphs are created under the directory results/{data}_exp
 	
-<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Cluster_Means.gif" width="100%"></a>
+<p align="center"><sub><b>Average Gene Expression of All Clusters Against Cluster 1</b></sub></p>
+<a src="https://github.com/tt104/scmix/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Cluster_Means.gif" width="100%"></a>
 	
 </details>
 
