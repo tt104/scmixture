@@ -208,6 +208,6 @@ model: "nb"
 * Replace `DATASET` with the name of your dataset, ignoring the .csv file extension, e.g. `--config data=GBM`
 * If running g:Profiler, replace `ORGANISM_ID` with the <a href="https://biit.cs.ut.ee/gprofiler/page/organism-list">g:Profiler id</a> for the data's subject (for example `hsapiens` for human or `mmusculus` for mouse), otherwise `organism=ORGANISM_ID` can be omitted from the command
 
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Code_Run.gif" width="100%"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Code_Run.gif" width="800"></a>
 
 </details>
