@@ -98,7 +98,7 @@ This enables the identification of significantly enriched biological functions a
           		<li>N/A</li>
         	</ul>
 	    </td>
-            <td align="left" valign="top">Download from <a href="https://www.anaconda.com/products/individual">the Anaconda site</a></td>
+            <td align="left" valign="top">Download from the <a href="https://www.anaconda.com/products/individual"> Anaconda site</a></td>
         </tr>
         <tr>
             <td align="center" valign="top"><a href="https://sylabs.io/guides/3.0/user-guide/installation.html"><img height="60" width="60" src="https://github.com/tt104/scmixture/blob/assets/Images/Singularity_Logo.png"></a><p><b>Singularity</b></a></td>
@@ -145,7 +145,7 @@ This enables the identification of significantly enriched biological functions a
 
 - Either locate the file and pressing "Extract"
 
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Extract_ZIP.png" width="600"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Extract_ZIP.png" width="800"></a>
 
 - Or if using the terminal, use the command below, where `scmixture.zip` is the file path of the zip file and `~/new_file_path` is the location where you want to save the file
 
@@ -201,12 +201,13 @@ model: "nb"
 ```
 
 **8.** Run the code through the command below:
-* Replace `n` in `--cores n` with the number of cores you wish to use
-* Replace `DATASET` with the name of your dataset, ignoring the .csv file extension, e.g. `--config data=GBM`
 ```console
-(snakemake) user@terminal:~/scmixture$ snakemake --use-singularity --cores n --config data=DATASET
+(snakemake) user@terminal:~/scmixture$ snakemake --use-singularity --cores n --config data=DATASET organism=ORGANISM_ID
 ```
+* Replace `n` in `--cores n` (or `-cn`) with the number of cores you wish to use
+* Replace `DATASET` with the name of your dataset, ignoring the .csv file extension, e.g. `--config data=GBM`
+* If running g:Profiler, replace `ORGANISM_ID` with the <a href="https://biit.cs.ut.ee/gprofiler/page/organism-list">g:Profiler id</a> for the data's subject (for example `hsapiens` for human or `mmusculus` for mouse), otherwise `organism=ORGANISM_ID` can be omitted from the command
 
-<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmix/blob/assets/Images/Code_Run.gif" width="800"></a>
+<a src="https://github.com/tt104/scmixture/archive/refs/heads/main.zip"><img src="https://github.com/tt104/scmixture/blob/assets/Images/Code_Run.gif" width="100%"></a>
 
 </details>
