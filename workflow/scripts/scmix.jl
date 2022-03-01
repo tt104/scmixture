@@ -8,7 +8,6 @@ using Random
 using DelimitedFiles #
 using SpecialFunctions
 using Statistics
-using Clustering #
 using LinearAlgebra #
 
 include(snakemake.scriptdir*"/sliceSample.jl")
@@ -57,11 +56,7 @@ cv = sqrt.(exp.(vs.-1))
 ixc = sortperm(cv,rev=true)
 data = dataFull[:,ixc[1:filter]]
 
-# K means for initial Z
-kmeanN = snakemake.config["kmeans"]
-datak = log.(datascaled[:,ixc[1:filter]]'.+1)
-kmc = kmeans(datak,kmeanN)
-initZ = assignments(kmc)
+ninit = snakemake.config["initialZ"]
 
 cells = string(size(data)[1])
 transcripts_full = string(size(dataFull)[2])
@@ -103,15 +98,22 @@ end
 
 L = size(data)[1]
 
-
-if model_type=="nb"
-	println("Using DP NB model")
+if model_type=="nbzi"
+	println("Using DP NB ZI model")
 	println("Reading hyperparameters from "*hyper_params)
 	hp = readdlm(hyper_params,',',Float32)
 	h = Hyperparameters(hp[1],hp[2],hp[3],hp[4]) #EB TEST
 	println("Using hyperparameters "*string(h))
 	mixdist = MixtureDistribution(mkLikelihood(data),mkPrior(data,h),mkPrior!(data,h),mkPriorDens(h),mkCondLocal(data,h),mkCondGlobal(data),L,prior_samps)
 	glob = Model(ones(size(data)),scales,1)
+elseif model_type=="nbnozi"
+	println("Using DP NB no ZI model")
+	println("Reading hyperparameters from "*hyper_params)
+	hp = readdlm(hyper_params,',',Float32)
+	h = Hyperparameters(hp[1],hp[2],hp[3],hp[4]) #EB TEST
+	println("Using hyperparameters "*string(h))
+	mixdist = MixtureDistribution(mkLikelihood(data),mkPrior(data,h),mkPrior!(data,h),mkPriorDens(h),mkCondLocal(data,h),mkCondGlobal(data),L,prior_samps)
+	glob = Model(ones(size(data)),scales,0)
 else
 	println("Using DP multinomial model")
 	h = HyperparametersMult(1.0f0)
@@ -130,7 +132,7 @@ map_est = -Inf
 zmat = zeros(Float32,(L,L))
 sample_count = 0
 for sampruns in 1:chains
-	s = mcmcDP(mixdist,glob,iter,burnin,thin,gibbs_samps,initZ)
+	s = mcmcDP(mixdist,glob,iter,burnin,thin,gibbs_samps,ninit)
 	m_ix = argmax(s[3])
 	m = maximum(s[3])
 	if m>map_est
