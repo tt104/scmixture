@@ -1,0 +1,121 @@
+container: "library://tt104/default/scmixture:0.1"
+configfile: "config/config.yaml"
+
+# Global variable
+DIRECTIONS = ["up", "down"]
+	
+class CheckpointPathFinder:
+    def __init__(self, path, directions=["up"]):
+    	# Set the file path with wildcards
+        self.path = path
+        self.directions = directions
+
+    def __call__(self, wildcards):
+        global checkpoints
+
+        # Find the checkpoint's output directory
+	checkpoint_output = checkpoints.Genes.get(**wildcards).output[0]
+	
+	file_names = []
+	
+	for direct in self.directions:
+	        # Find the cluster numbers, e.g. ['1', '2', '3', ... ], from files in the directory with the direction
+	        numbers = glob_wildcards(os.path.join(checkpoint_output, 'Cluster_{id}_' + str(direct) + '.csv')).id
+	        # Dynamically create file names for graphs and add to a list
+	        file_names = file_names + expand(self.path, data=config["data"], id=numbers, direction=direct)
+	        
+        # Return the list of files to use for the rule
+        return file_names
+	
+# Snakemake runs the first rule so create a pseudo-rule to define the target outputs
+rule All:
+	input:
+		expand("results/plots/{data}.umapClusters.pdf", data=config["data"]), # Rule UmapPlots
+		CheckpointPathFinder(path="results/{data}_exp/Cluster_{id}_{direction}_Manhattan.html", directions=DIRECTIONS), # Rule Gprofiler
+		"finished.txt", # Rule MeanPlot
+	shell:
+		'''
+		rm finished.txt
+		'''
+
+# Snakemake rules
+
+rule Scales:
+	input: 
+		gene_counts = expand("data/{data}.csv", data=config["data"])
+	output: 
+		scales_data = expand("results/{data}.scales.csv", data=config["data"])
+	script: "scripts/scales.R"
+
+rule Hyperparameters:
+	input: 
+		rules.Scales.input.gene_counts,
+		rules.Scales.output.scales_data
+	output: 
+		params = expand("results/{data}.hyperparameters.csv", data=config["data"])
+	script: "scripts/hyperparameters.R"
+
+rule Clustering:
+	input:
+		rules.Scales.input.gene_counts,
+		rules.Scales.output.scales_data,
+		rules.Hyperparameters.output.params,
+		conf = "resources/conf/"
+	output: 
+		clusters_raw = expand("results/raw/{data}.clusters.csv", data=config["data"]),
+		mu_raw = expand("results/raw/{data}.clusterParamsMu.csv", data=config["data"]),
+		omega_raw = expand("results/raw/{data}.clusterParamsOmega.csv", data=config["data"]),
+		names_raw = expand("results/raw/{data}.names.csv", data=config["data"]),
+		uncertain = expand("results/raw/{data}.uncertain.csv", data=config["data"])
+	script: "scripts/scmix.jl"
+
+rule Postprocessing:
+	input: 
+		rules.Scales.input.gene_counts,
+		rules.Clustering.output.clusters_raw,
+		rules.Clustering.output.mu_raw,
+		rules.Clustering.output.omega_raw,
+		rules.Clustering.output.names_raw,
+		rules.Clustering.output.uncertain
+	output: 
+		clusters = expand("results/{data}.clusters.csv", data=config["data"]),
+		table = expand("results/{data}.clusterTable.csv", data=config["data"]),
+		means = expand("results/{data}.clusterMeans.csv", data=config["data"]),
+		omegas = expand("results/{data}.clusterOmegas.csv", data=config["data"])
+	script: "scripts/post.R"
+
+rule UmapPlots:
+	input: 
+		rules.Scales.input.gene_counts,
+		rules.Postprocessing.output.clusters,
+		rules.Postprocessing.output.means,
+		rules.Postprocessing.output.omegas,
+		rules.Clustering.output.uncertain
+	output:
+		umap = expand("results/plots/{data}.umapClusters.pdf", data=config["data"])
+	script: "scripts/plots.R"
+
+checkpoint Genes:
+	input: 
+		rules.Postprocessing.output.means,
+		rules.Postprocessing.output.omegas,
+		rules.Clustering.output.uncertain
+	output: 
+		directory(expand("results/{data}_exp", data=config["data"])),
+	script: 
+		"scripts/genes.R"
+
+rule Gprofiler:
+	input: 
+		expand("results/{data}_exp/Cluster_{{id}}_{direction}.csv", data=config["data"], allow_missing=True)
+	output: 
+		expand("results/{data}_exp/Cluster_{{id}}_{direction}_Manhattan.html", data=config["data"], allow_missing=True)
+	script: "scripts/gprof.R"
+	
+rule MeanPlot:
+	input: 
+		rules.Postprocessing.output.means
+	output:
+		directory(expand("results/plots/{data}_Cluster_Means", data=config["data"])),
+		touch('finished.txt')
+	script: "scripts/meanplots.R"

@@ -4,7 +4,7 @@ configfile: "config/config.yaml"
 # Snakemake runs the first rule so create a pseudo-rule to define the target outputs
 rule All:
 	input:
-		["results/benchmarking/"+d+"."+m+".ari.1.csv" for m in config["models"] for d in config["datasets"]]
+		["results/benchmarking/"+d+"."+m+".ari.pdf" for m in config["models"] for d in config["datasets"]]
 # Snakemake rules
 
 rule Scales:

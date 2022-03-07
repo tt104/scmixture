@@ -1,6 +1,6 @@
 library(mclust)
 
-labels<-factor(as.vector(as.matrix(read.csv(args[1],header=FALSE))))
+labels<-factor(as.vector(as.matrix(read.csv(snakemake@input[[1]],header=FALSE))))
 
 z<-as.matrix(read.csv(snakemake@input[[2]],header=TRUE))[,1]
 

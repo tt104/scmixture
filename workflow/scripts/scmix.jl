@@ -25,7 +25,7 @@ hyper_params = snakemake.input[3]
 filter = snakemake.config["filter"]
 prior_samps = 1
 gibbs_samps = 1
-model_type = snakemake.config["model"]
+model_type = snakemake.params["model"]
 
 (genes_expr,cell_labels) = readdlm(input_file,',',header=true)
 
@@ -105,15 +105,15 @@ if model_type=="nbzi"
 	h = Hyperparameters(hp[1],hp[2],hp[3],hp[4]) #EB TEST
 	println("Using hyperparameters "*string(h))
 	mixdist = MixtureDistribution(mkLikelihood(data),mkPrior(data,h),mkPrior!(data,h),mkPriorDens(h),mkCondLocal(data,h),mkCondGlobal(data),L,prior_samps)
-	glob = Model(ones(size(data)),scales,1)
-elseif model_type=="nbnozi"
-	println("Using DP NB no ZI model")
-	println("Reading hyperparameters from "*hyper_params)
-	hp = readdlm(hyper_params,',',Float32)
-	h = Hyperparameters(hp[1],hp[2],hp[3],hp[4]) #EB TEST
-	println("Using hyperparameters "*string(h))
-	mixdist = MixtureDistribution(mkLikelihood(data),mkPrior(data,h),mkPrior!(data,h),mkPriorDens(h),mkCondLocal(data,h),mkCondGlobal(data),L,prior_samps)
-	glob = Model(ones(size(data)),scales,0)
+	glob = Model(scales,1)
+#elseif model_type=="nbnozi"
+#	println("Using DP NB no ZI model")
+#	println("Reading hyperparameters from "*hyper_params)
+#	hp = readdlm(hyper_params,',',Float32)
+#	h = Hyperparameters(hp[1],hp[2],hp[3],hp[4]) #EB TEST
+#	println("Using hyperparameters "*string(h))
+#	mixdist = MixtureDistribution(mkLikelihood(data),mkPrior(data,h),mkPrior!(data,h),mkPriorDens(h),mkCondLocal(data,h),mkCondGlobal(data),L,prior_samps)
+#	glob = Model(scales,0)
 else
 	println("Using DP multinomial model")
 	h = HyperparametersMult(1.0f0)
@@ -157,37 +157,39 @@ end
 
 writedlm(snakemake.output[1],getZs(samp[1],map_ix),',')
 
-writedlm(snakemake.output[4],gene_names[ixc[1:filter]],',')
+if snakemake.config["bench"]==false
+	writedlm(snakemake.output[4],gene_names[ixc[1:filter]],',')
 
-if model_type=="nb"
-	writedlm(snakemake.output[2],getMus(samp[1],map_ix),',')
-	writedlm(snakemake.output[3],getOmegas(samp[1],map_ix),',')
-end
+	if model_type=="nbzi"
+		writedlm(snakemake.output[2],getMus(samp[1],map_ix),',')
+		writedlm(snakemake.output[3],getOmegas(samp[1],map_ix),',')
+	end
 
-# Uncertain labels
+	# Uncertain labels
 
-zmat = zmat+zmat'
-zmat = zmat./sample_count
-z = getZs(samp[1],map_ix)
+	zmat = zmat+zmat'
+	zmat = zmat./sample_count
+	z = getZs(samp[1],map_ix)
 
-function getUncert(z,zmat)
-	L = size(z)[1]
-	u = []
-	for i in 1:L
-		c = z[i]
-		ne = findall(z.==c)
-		filter!(x->x!=i,ne)
-		if length(ne)>0
-			ps = zmat[i,ne]
-			p = sum(ps)/length(ne)
-			if p<0.5
-				push!(u,i)
+	function getUncert(z,zmat)
+		L = size(z)[1]
+		u = []
+		for i in 1:L
+			c = z[i]
+			ne = findall(z.==c)
+			filter!(x->x!=i,ne)
+			if length(ne)>0
+				ps = zmat[i,ne]
+				p = sum(ps)/length(ne)
+				if p<0.5
+					push!(u,i)
+				end
 			end
 		end
+		return u
 	end
-	return u
+
+	u = getUncert(z,zmat)
+
+	writedlm(snakemake.output[5],cell_labels[u],',')
 end
-
-u = getUncert(z,zmat)
-
-writedlm(snakemake.output[5],cell_labels[u],',')
