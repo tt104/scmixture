@@ -63,7 +63,6 @@ function sampleAlpha!(thetaDP::MixtureTheta{T}) where T
 	# julia distributions gamma is shape/scale
 	alpha = rand(Gamma(1+k-1.0f0+u,1.0f0/(1.0f0-log(v))))
 	thetaDP.alpha = alpha
-	#println("Alpha "*string(alpha)*", "*string(k)*" clusters")
 end
 
 function gibbsSampleDP!(mix,thetaDP::MixtureTheta{T},thetaModel) where T
@@ -164,8 +163,6 @@ function gibbsSampleDP!(mix,thetaDP::MixtureTheta{T},thetaModel) where T
 	uu = minimum(u)
 
 	# STEP D
-	# D1
-	# Sample DP alpha (skip for now)
 	# D2
 	# Sample V^P (potential) - here CC is C*, total number of potential + active
 	vvsum = vA[1]
