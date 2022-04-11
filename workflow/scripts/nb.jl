@@ -33,7 +33,6 @@ end
 
 mutable struct Model
 	scales :: Array{Float32,1}
-	ziflag :: Int32
 end
 
 # Prior
@@ -91,6 +90,7 @@ function mkCondLocal(D,h)
 		L = length(ix)
 		scalesix = thetaGlobal.scales[ix]
 		#sample t
+		delta = x -> x==0.0f0 ? 1.0 : 0.0
 		t = zeros(L,M)
 		for i in 1:L
 			for j in 1:M
@@ -139,7 +139,7 @@ function mkCondLocal(D,h)
 		end
 		#sample w
 		for j in 1:M
-			theta.w[j] = rbeta(1+sum(t[:,j]),1+(M-sum(t[:,j]))) # beta
+			theta.w[j] = rbeta(1+sum(t[:,j]),1+(L-sum(t[:,j]))) # beta
 		end
 	end
 end

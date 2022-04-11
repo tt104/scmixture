@@ -105,7 +105,7 @@ if model_type=="nbzi"
 	h = Hyperparameters(hp[1],hp[2],hp[3],hp[4]) #EB TEST
 	println("Using hyperparameters "*string(h))
 	mixdist = MixtureDistribution(mkLikelihood(data),mkPrior(data,h),mkPrior!(data,h),mkPriorDens(h),mkCondLocal(data,h),mkCondGlobal(data),L,prior_samps)
-	glob = Model(scales,1)
+	glob = Model(scales)
 #elseif model_type=="nbnozi"
 #	println("Using DP NB no ZI model")
 #	println("Reading hyperparameters from "*hyper_params)
