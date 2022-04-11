@@ -25,7 +25,7 @@ hyper_params = snakemake.input[3]
 filter = snakemake.config["filter"]
 prior_samps = 1
 gibbs_samps = 1
-model_type = snakemake.params["model"]
+model_type = snakemake.config["model"]
 
 (genes_expr,cell_labels) = readdlm(input_file,',',header=true)
 
