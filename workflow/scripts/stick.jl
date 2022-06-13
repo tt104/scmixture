@@ -50,7 +50,6 @@ function sampleAlpha!(thetaDP::MixtureTheta{T}) where T
 			k = k + 1
 		end
 	end
-	# https://stats.stackexchange.com/questions/381867/gibbs-sampler-for-dirichlet-process-concentration-parameter
 	n = size(thetaDP.z)[1]
 	ua = n/(n+thetaDP.alpha)
 	t = rand()
