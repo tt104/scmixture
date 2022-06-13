@@ -10,6 +10,12 @@ function llgamma(x::Float64)
 	return (logabsgamma(x))[1]
 end
 
+function logsum(x,y)
+	m = max(x,y)
+	s = log(exp(x-m)+exp(y-m))+m
+	return s
+end
+
 # Data structures
 
 struct Hyperparameters
@@ -22,12 +28,11 @@ end
 mutable struct ThetaClust
 	mu :: Array{Float32,1}
 	omega :: Array{Float32,1}
+	w :: Array{Float32,1}
 end
 
 mutable struct Model
-	U :: Array{Float32,2}
 	scales :: Array{Float32,1}
-	ziflag :: Int32
 end
 
 # Prior
@@ -37,7 +42,8 @@ function mkPrior(D,h)
 	function sampleClusterPrior()
 		mu = randGamma(h.s,1.0f0/h.t,M) # Hyperparameters are shape/rate
 		omega = randGamma(h.a,1.0f0/h.b,M)
-		ThetaClust(mu,omega)
+		w = rand(Float32,M)
+		ThetaClust(mu,omega,w)
 	end
 end
 
@@ -54,6 +60,7 @@ function mkPrior!(D,h)
 	function sampleClusterPrior(cl)
 		randGamma!(h.s,1.0f0/h.t,cl.mu) # Hyperparameters are shape/rate
 		randGamma!(h.a,1.0f0/h.b,cl.omega)
+		rand!(cl.w)
 	end
 end
 
@@ -62,83 +69,85 @@ function mkLikelihood(D::Array{Float32,2})
 	M = size(D)[2]
 	function f(i::Int64,theta::ThetaClust,model::Model)
 		s = 0.0f0
+		delta = x -> x==0.0f0 ? 1.0 : 0.0
 		@inbounds for j = 1:M
 			io = theta.omega[j]
 			mo = model.scales[i]*theta.mu[j]*(1.0f0/theta.omega[j])
+			w = theta.w[j]
 			l = llgamma(D[i,j]+io) - (llgamma(D[i,j]+1.0f0) + llgamma(io)) - (io)*log(1.0f0+mo) + D[i,j] * (log(mo) - log(1.0f0+mo))
-			s = s + model.U[i,j]*l
+			s = s + logsum(log(w)+l,log(1-w)+log(delta(D[i,j])))
 		end
 		return s
 	end
 end
 
-# Local Gibbs update
+# Local Gibbs update- TO FIX --------------------------------------------------------------------------------------------------------------------------- #
 
 function mkCondLocal(D,h)
 	M = size(D)[2]
 	function sampleCondLocal(theta,thetaGlobal,ix)
 		xs = D[ix,:]
 		L = length(ix)
-		UU = thetaGlobal.U[ix,:]
 		scalesix = thetaGlobal.scales[ix]
+		#sample t
+		delta = x -> x==0.0f0 ? 1.0 : 0.0
+		t = zeros(L,M)
+		for i in 1:L
+			for j in 1:M
+				r0 = delta(xs[i,j])
+				m = theta.mu[j]
+				io = theta.omega[j]
+				mo = scalesix[i]*m*(1.0f0/io)
+				l = llgamma(xs[i,j]+io) - (llgamma(xs[i,j]+1.0f0) + llgamma(io)) - (io)*log(1.0f0+mo) + xs[i,j] * (log(mo) - log(1.0f0+mo)) 
+				rN = exp(l)
+				if r0>0.00
+					r = (theta.w[j]*rN)/((theta.w[j]*rN)+((1.0f0-theta.w[j])*r0))
+				else
+					r = 1.0
+				end
+				tmp = rand()
+				if tmp<r
+					t[i,j] = 1.0f0
+				else
+					t[i,j] = 0.0f0
+				end
+			end
+		end
 		#sample v
 		v = zeros(L,M)
 		for i in 1:L
 			for j in 1:M
-				v[i,j] = randGamma(xs[i,j]*UU[i,j]+theta.omega[j],1.0f0/(scalesix[i]*theta.mu[j]*UU[i,j]+theta.omega[j])) # Shape/Rate param
+				v[i,j] = randGamma(xs[i,j]*t[i,j]+theta.omega[j],1.0f0/(scalesix[i]*theta.mu[j]*t[i,j]+theta.omega[j])) # Shape/Rate param
 			end
 		end
 		#sample mu
 		for j in 1:M
-			theta.mu[j] = randGamma(dot(xs[:,j],UU[:,j])+h.s,1.0f0/(dot(scalesix.*v[:,j],UU[:,j])+h.t)) # Shape/Rate params
+			theta.mu[j] = randGamma(dot(xs[:,j],t[:,j])+h.s,1.0f0/(dot(scalesix.*v[:,j],t[:,j])+h.t)) # Shape/Rate params
 		end
 		#sample omega
 		for j in 1:M
-			N = sum(UU[:,j])
+			N = sum(t[:,j])
 			lvSum = 0.0f0
 			for i in 1:L
-				lvSum += UU[i,j]*log(v[i,j])
+				lvSum += t[i,j]*log(v[i,j])
 			end
-			vSum = dot(UU[:,j],v[:,j])
+			vSum = dot(t[:,j],v[:,j])
 			function likeOmega(w)::Float32
 				return (w-1)*lvSum-w*vSum+(h.a-1.0f0)*log(w)-h.b*w+N*w*log(w)-N*llgamma(w)
 			end
 			theta.omega[j] = sliceSample(theta.omega[j],likeOmega)
 		end
+		#sample w
+		for j in 1:M
+			theta.w[j] = rbeta(1+sum(t[:,j]),1+(L-sum(t[:,j]))) # beta
+		end
 	end
 end
 
 # Global Gibbs update
-
+# empty
 function mkCondGlobal(D::Array{Float32,2})
-	delta = x -> x==0.0f0 ? 1.0 : 0.0
 	L,M = size(D)
 	function sampleCondGlobal(thetaDP,thetaModel::Model)
-		for i = 1:L
-			for j in 1:M
-				if thetaModel.ziflag==1
-					r0 = delta(D[i,j])
-					m = thetaDP.cluster[thetaDP.z[i]].mu[j]
-					o = thetaDP.cluster[thetaDP.z[i]].omega[j]
-					io = o
-					mo = thetaModel.scales[i]*m*(1.0f0/o)
-					l = llgamma(D[i,j]+io) - (llgamma(D[i,j]+1.0f0) + llgamma(io)) - (io)*log(1.0f0+mo) + D[i,j] * (log(mo) - log(1.0f0+mo)) 
-					rN = exp(l)
-					if r0>0.00
-						r = rN/(r0+rN)
-					else
-						r = 1.0
-					end
-					tmp = rand()
-					if tmp<r
-						thetaModel.U[i,j] = 1.0f0
-					else
-						thetaModel.U[i,j] = 0.0f0
-					end
-				else
-					thetaModel.U[i,j] = 1.0f0
-				end
-			end
-		end
 	end
 end

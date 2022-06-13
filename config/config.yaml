@@ -1,7 +1,7 @@
 ##########################
 # Parameters below control algorithm settings
-# K-means initialisation - no. of clusters
-kmeans: 40
+# Initialisation - no. of clusters
+initialZ: 100
 # Controls the number of transcripts selected to consider in clustering
 filter: 1000
 # Burn-in, total number of MCMC chain iterations, thinning out interval and total number of chains
@@ -10,4 +10,4 @@ iter: 1000
 thin: 10
 chains: 4
 # model - nb or mult
-model: "nb"
+model: "nbzi"

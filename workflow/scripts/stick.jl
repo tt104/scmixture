@@ -41,6 +41,29 @@ function rbeta(a,b)
 	return x
 end
 
+function sampleAlpha!(thetaDP::MixtureTheta{T}) where T
+	# non-empty	
+	k = 0
+	for j = 1:thetaDP.K
+		ix = findall(thetaDP.z .== j)
+		if length(ix)>0
+			k = k + 1
+		end
+	end
+	n = size(thetaDP.z)[1]
+	ua = n/(n+thetaDP.alpha)
+	t = rand()
+	if t<ua
+		u = 1.0f0
+	else
+		u = 0.0f0
+	end
+	v = rand(Beta(thetaDP.alpha+1,n))
+	# julia distributions gamma is shape/scale
+	alpha = rand(Gamma(1+k-1.0f0+u,1.0f0/(1.0f0-log(v))))
+	thetaDP.alpha = alpha
+end
+
 function gibbsSampleDP!(mix,thetaDP::MixtureTheta{T},thetaModel) where T
 	
 	# STEP A
@@ -131,7 +154,7 @@ function gibbsSampleDP!(mix,thetaDP::MixtureTheta{T},thetaModel) where T
 	for i in 1:mix.L
 		l = thetaDP.z[i]
 		vv = vA[l]*prod(1.0f0.-vA[1:(l-1)])
-		u[i] = runif(0,vv)
+		u[i] = runif(0,vv) #rand(Uniform(0,vv))
 	end
 
 	# STEP C
@@ -139,8 +162,6 @@ function gibbsSampleDP!(mix,thetaDP::MixtureTheta{T},thetaModel) where T
 	uu = minimum(u)
 
 	# STEP D
-	# D1
-	# Sample DP alpha (skip for now)
 	# D2
 	# Sample V^P (potential) - here CC is C*, total number of potential + active
 	vvsum = vA[1]
@@ -153,6 +174,9 @@ function gibbsSampleDP!(mix,thetaDP::MixtureTheta{T},thetaModel) where T
 	vv = vv*(1-vA[ZZ])
 
 	while true 
+		if CC>500
+			break
+		end
 		if vvsum>(1-uu)
 			break
 		end
@@ -202,14 +226,13 @@ function gibbsSampleDP!(mix,thetaDP::MixtureTheta{T},thetaModel) where T
 	thetaDP.counts = countsnew
 end
 
-function initialiseDP(mix,initZ)
-	ninit = maximum(initZ)
+function initialiseDP(mix,ninit)
 	counts = zeros(Int64,ninit)
+	initialZ = zeros(Int64,mix.L)
 	for i in 1:mix.L
-		z = initZ[i]
-		counts[z] = counts[z]+1
+		initialZ[i] = rand(Categorical(ones(Float32,ninit)/ninit))
+		counts[initialZ[i]] = counts[initialZ[i]]+1
 	end
-	initialZ = copy(initZ)
 	clusters = Array{Any}(undef,ninit)
 	for j in 1:ninit
 		clusters[j] = mix.priorSample()
@@ -232,8 +255,8 @@ function calcpost(thetaDP,thetaModel,mix)
 	return p
 end
 
-function mcmcDP(mix,thetaModel::M,nsteps,burn,thin,ngibbs,initZ) where {M}
-	thetaDP = initialiseDP(mix,initZ)
+function mcmcDP(mix,thetaModel::M,nsteps,burn,thin,ngibbs,ninit) where {M}
+	thetaDP = initialiseDP(mix,ninit)
 	sampc = 1
 	nsamp = trunc(Int,(nsteps-burn)/thin)
 	sampsDP = Array{typeof(thetaDP)}(undef,nsamp)
@@ -255,6 +278,7 @@ function mcmcDP(mix,thetaModel::M,nsteps,burn,thin,ngibbs,initZ) where {M}
 		mix.condGlobalSample!(thetaDP,thetaModel)
 		# sample DP mixture
 		gibbsSampleDP!(mix,thetaDP,thetaModel)
+		sampleAlpha!(thetaDP)
 		if step>burn && ((step-burn)%thin)==0
 			sampsDP[sampc] = deepcopy(thetaDP)
 			sampsModel[sampc] = deepcopy(thetaModel)
